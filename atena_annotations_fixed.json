@@ -3,7 +3,7 @@
         "#": "1",
         "Term Type": "Care Contingency / Patient Care Safeguard",
         "Sub-Type": "Continuity of Care / Events of Default / Patient Care Protective Term",
-        "Description": "4. Insolvency of MCQ. In the event that MCO should become insolvent,\nHospital agrees to provide Covered Services to each Member of the insolvent entity until the\nsooner of: (I) the expiration of the period for which a Member's premiums have been paid to\nMCO and, in the case of a Member confined as an inpatient in Hospital's facility at the time of\nsuch expiration, until the time of discharge from the facility; or (ii) until the Member becomes\ncovered under another health insurance plan with similar benefits.",
+        "Description": "In the event that MCO should become insolvent,\nHospital agrees to provide Covered Services to each Member of the insolvent entity until the\nsooner of: (I) the expiration of the period for which a Member's premiums have been paid to\nMCO and, in the case of a Member confined as an inpatient in Hospital's facility at the time of\nsuch expiration, until the time of discharge from the facility; or (ii) until the Member becomes\ncovered under another health insurance plan with similar benefits.",
         "Business Area": "Operational Risk Management",
         "Page #": "Page 21 of 36 point # 4"
     },
