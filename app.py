@@ -1,14 +1,19 @@
 import streamlit as st
 import pandas as pd
 import json
+import os
+
+# Define the paths for the JSON files relative to the script
+ATENA_JSON_PATH = os.path.join(os.getcwd(), "atena_annotations_fixed.json")
+BCBS_JSON_PATH = os.path.join(os.getcwd(), "bcbs_annotations_fixed.json")
 
 # Load the annotated data from JSON files
 def load_atena_data():
-    with open("atena_annotations_fixed.json", "r") as f:
+    with open(ATENA_JSON_PATH, "r") as f:
         return pd.DataFrame(json.load(f))
 
 def load_bcbs_data():
-    with open("bcbs_annotations_fixed.json", "r") as f:
+    with open(BCBS_JSON_PATH, "r") as f:
         return pd.DataFrame(json.load(f))
 
 # Generate a holistic summary of the description
@@ -20,6 +25,7 @@ def summarize_description(description):
 def filter_data(df, business_area):
     df_filtered = df[df["Business Area"] == business_area]
     df_filtered["Summary"] = df_filtered["Description"].apply(summarize_description)
+    df_filtered.reset_index(drop=True, inplace=True)  # Ensure proper numbering
     return df_filtered[["Term Type", "Sub-Type", "Summary", "Page #"]]
 
 # Streamlit app
@@ -32,7 +38,7 @@ def main():
 
     if uploaded_file:
         # Determine which dataset to load based on the file name
-        if "AETNA" in uploaded_file.name.upper():
+        if "ATENA" in uploaded_file.name.upper():
             data = load_atena_data()
             st.success("Aetna annotations loaded successfully!")
         elif "BLUE" in uploaded_file.name.upper():
@@ -53,7 +59,7 @@ def main():
             report = filter_data(data, business_area)
             if not report.empty:
                 st.write(f"### Report for {business_area}")
-                st.dataframe(report)
+                st.table(report)  # Display a static, scroll-free table
             else:
                 st.warning("No data available for the selected business area.")
 
