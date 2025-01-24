@@ -84,7 +84,7 @@ def main():
             st.session_state.data = load_bcbs_data()
             status_placeholder.success("BCBSA annotations loaded successfully!")
         else:
-            status_placeholder.error("File name must contain either 'ATENA' or 'BLUE' to process.")
+            status_placeholder.error("ERROR.")
             return
 
         # Business area selection using radio buttons
