@@ -32,7 +32,7 @@ def main():
 
     if uploaded_file:
         # Determine which dataset to load based on the file name
-        if "ATENA" in uploaded_file.name.upper():
+        if "AETNA" in uploaded_file.name.upper():
             data = load_atena_data()
             st.success("Aetna annotations loaded successfully!")
         elif "BLUE" in uploaded_file.name.upper():
