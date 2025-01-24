@@ -52,7 +52,7 @@ def main():
             st.session_state.business_area = None
 
         # Determine which dataset to load based on the file name
-        if "ATENA" in uploaded_file.name.upper():
+        if "AETNA" in uploaded_file.name.upper():
             st.session_state.data = load_atena_data()
             status_placeholder.success("Aetna annotations loaded successfully!")
         elif "BLUE" in uploaded_file.name.upper():
