@@ -3,6 +3,7 @@ import pandas as pd
 import json
 import os
 import time
+from fpdf import FPDF
 
 # Define the paths for the JSON files relative to the script
 ATENA_JSON_PATH = os.path.join(os.getcwd(), "atena_annotations_fixed.json")
@@ -21,6 +22,8 @@ def load_bcbs_data():
 def generate_key_takeaways(description):
     sentences = description.split('. ')
     takeaways = [f"• {sentence.strip()}" for sentence in sentences[:5]]
+    while len(takeaways) < 5:  # Ensure exactly 5 bullet points
+        takeaways.append("• [No further details available]")
     return '\n'.join(takeaways)
 
 # Filter data based on the selected business area
@@ -30,8 +33,30 @@ def filter_data(df, business_area):
     df_filtered.reset_index(drop=True, inplace=True)  # Ensure proper numbering
     return df_filtered[["Term Type", "Sub-Type", "Key Takeaways", "Page #"]]
 
+# Generate PDF for download
+def generate_pdf(dataframe, business_area):
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+    pdf.cell(200, 10, txt=f"Contract Analysis Report: {business_area}", ln=True, align='C')
+    pdf.ln(10)
+    for i, row in dataframe.iterrows():
+        pdf.set_font("Arial", style="B", size=11)
+        pdf.cell(200, 10, txt=f"Record #{i+1}", ln=True)
+        pdf.set_font("Arial", size=10)
+        pdf.cell(200, 10, txt=f"Term Type: {row['Term Type']}", ln=True)
+        pdf.cell(200, 10, txt=f"Sub-Type: {row['Sub-Type']}", ln=True)
+        pdf.multi_cell(0, 10, txt=f"Key Takeaways:\n{row['Key Takeaways']}")
+        pdf.cell(200, 10, txt=f"Page #: {row['Page #']}", ln=True)
+        pdf.ln(5)
+    return pdf.output(dest="S").encode("latin1")
+
 # Streamlit app
 def main():
+    # Set wide layout
+    st.set_page_config(layout="wide")
+
     st.title("Contract Analysis Report")
     st.write("Upload a contract file and select a business area to generate a report.")
     
@@ -62,36 +87,33 @@ def main():
             status_placeholder.error("File name must contain either 'ATENA' or 'BLUE' to process.")
             return
 
-        # Business area selection using checkboxes
-        st.write("Select a Business Area:")
-        operational_risk = st.checkbox("Operational Risk Management")
-        financial_risk = st.checkbox("Financial Risk Management")
+        # Business area selection using radio buttons
+        business_area = st.radio(
+            "Select a Business Area",
+            ["Operational Risk Management", "Financial Risk Management"]
+        )
 
         # Button to generate the report
         if st.button("Generate Report"):
-            # Determine selected business area
-            selected_areas = []
-            if operational_risk:
-                selected_areas.append("Operational Risk Management")
-            if financial_risk:
-                selected_areas.append("Financial Risk Management")
-
-            # Ensure at least one area is selected
-            if not selected_areas:
-                st.warning("Please select at least one business area.")
-                return
-
             # Simulate generating the report
             with st.spinner("Generating report..."):
                 time.sleep(10)
 
             # Generate and display the report
-            report_frames = [filter_data(st.session_state.data, area) for area in selected_areas]
-            full_report = pd.concat(report_frames, ignore_index=True)
+            report = filter_data(st.session_state.data, business_area)
 
-            if not full_report.empty:
-                st.write(f"### Report")
-                st.table(full_report)
+            if not report.empty:
+                st.write(f"### Report for {business_area}")
+                st.table(report)  # Expanded table width
+
+                # PDF download
+                pdf_data = generate_pdf(report, business_area)
+                st.download_button(
+                    label="Download Report as PDF",
+                    data=pdf_data,
+                    file_name="Contract_Analysis_Report.pdf",
+                    mime="application/pdf"
+                )
             else:
                 st.warning("No data available for the selected business area.")
 
