@@ -3,7 +3,7 @@ import pandas as pd
 import json
 import os
 import time
-from fpdf import FPDF
+import matplotlib.pyplot as plt
 
 # Define the paths for the JSON files relative to the script
 ATENA_JSON_PATH = os.path.join(os.getcwd(), "atena_annotations_fixed.json")
@@ -33,6 +33,25 @@ def filter_data(df, business_area):
     df_filtered.reset_index(drop=True, inplace=True)  # Ensure proper numbering
     return df_filtered[["Term Type", "Sub-Type", "Key Takeaways", "Page #"]]
 
+# Plot pie chart
+def plot_pie_chart(data):
+    counts = data["Business Area"].value_counts()
+    labels = counts.index
+    sizes = counts.values
+    colors = ["#FF9999", "#66B3FF"]
+
+    fig, ax = plt.subplots()
+    ax.pie(
+        sizes,
+        labels=labels,
+        autopct="%1.1f%%",
+        startangle=90,
+        colors=colors,
+        textprops={"fontsize": 12},
+    )
+    ax.axis("equal")  # Equal aspect ratio ensures the pie chart is circular.
+    plt.title("Business Area Distribution", fontsize=16)
+    return fig
 
 # Streamlit app
 def main():
@@ -69,6 +88,11 @@ def main():
             status_placeholder.error("ERROR.")
             return
 
+        # Display pie chart for business area distribution
+        st.write("### Business Area Distribution")
+        pie_chart = plot_pie_chart(st.session_state.data)
+        st.pyplot(pie_chart)
+
         # Business area selection using radio buttons
         business_area = st.radio(
             "Select a Business Area",
@@ -87,15 +111,6 @@ def main():
             if not report.empty:
                 st.write(f"### Report for {business_area}")
                 st.table(report)  # Expanded table width
-
-                # PDF download
-                pdf_data = generate_pdf(report, business_area)
-                st.download_button(
-                    label="Download Report as PDF",
-                    data=pdf_data,
-                    file_name="Contract_Analysis_Report.pdf",
-                    mime="application/pdf"
-                )
             else:
                 st.warning("No data available for the selected business area.")
 
