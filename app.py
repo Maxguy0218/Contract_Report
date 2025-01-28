@@ -33,24 +33,6 @@ def filter_data(df, business_area):
     df_filtered.reset_index(drop=True, inplace=True)  # Ensure proper numbering
     return df_filtered[["Term Type", "Sub-Type", "Key Takeaways", "Page #"]]
 
-# Generate PDF for download
-def generate_pdf(dataframe, business_area):
-    pdf = FPDF()
-    pdf.set_auto_page_break(auto=True, margin=15)
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, txt=f"Contract Analysis Report: {business_area}", ln=True, align='C')
-    pdf.ln(10)
-    for i, row in dataframe.iterrows():
-        pdf.set_font("Arial", style="B", size=11)
-        pdf.cell(200, 10, txt=f"Record #{i+1}", ln=True)
-        pdf.set_font("Arial", size=10)
-        pdf.cell(200, 10, txt=f"Term Type: {row['Term Type']}", ln=True)
-        pdf.cell(200, 10, txt=f"Sub-Type: {row['Sub-Type']}", ln=True)
-        pdf.multi_cell(0, 10, txt=f"Key Takeaways:\n{row['Key Takeaways']}")
-        pdf.cell(200, 10, txt=f"Page #: {row['Page #']}", ln=True)
-        pdf.ln(5)
-    return pdf.output(dest="S").encode("latin1")
 
 # Streamlit app
 def main():
