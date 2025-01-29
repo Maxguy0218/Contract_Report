@@ -88,14 +88,23 @@ def main():
     
     # Branding in sidebar and main page
     logo_path = "logo.svg"
-    st.sidebar.image(logo_path, width=25)
-    st.sidebar.markdown("<div class='sidebar-title'>ContractIQ</div>", unsafe_allow_html=True)
+    st.sidebar.markdown(
+        f"""
+        <div class="sidebar-title">
+            <img src="{logo_path}" alt="Logo" style="width: 30px; vertical-align: middle;">
+            ContractIQ
+        </div>
+        """, unsafe_allow_html=True
+    )
     
-    col_header1, col_header2 = st.columns([1, 5])
-    with col_header1:
-        st.image(logo_path, width=70)
-    with col_header2:
-        st.markdown("<div class='main-title'>ContractIQ</div>", unsafe_allow_html=True)
+    st.markdown(
+        f"""
+        <div class="header-container">
+            <img src="{logo_path}" alt="Logo" style="width: 60px; vertical-align: middle;">
+            <span class="main-title">ContractIQ</span>
+        </div>
+        """, unsafe_allow_html=True
+    )
     
     # Sidebar upload section
     uploaded_file = st.sidebar.file_uploader("Upload a contract file", type=["docx", "pdf", "txt"])
@@ -121,6 +130,7 @@ def main():
             status_placeholder.error("ERROR.")
             return
         
+        time.sleep(4)
         status_placeholder.empty()
     
     col1, col2 = st.columns([2, 4])
@@ -133,7 +143,8 @@ def main():
         )
         
         if st.button("Generate Report"):
-            
+            with st.spinner("Generating report..."):
+                time.sleep(10)
             
             report = filter_data(st.session_state.data, business_area)
     
