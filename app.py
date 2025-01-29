@@ -88,12 +88,12 @@ def main():
     
     # Branding in sidebar and main page
     logo_path = "logo.svg"
-    st.sidebar.image(logo_path, width=30)
+    st.sidebar.image(logo_path, width=25)
     st.sidebar.markdown("<div class='sidebar-title'>ContractIQ</div>", unsafe_allow_html=True)
     
     col_header1, col_header2 = st.columns([1, 5])
     with col_header1:
-        st.image(logo_path, width=60)
+        st.image(logo_path, width=70)
     with col_header2:
         st.markdown("<div class='main-title'>ContractIQ</div>", unsafe_allow_html=True)
     
