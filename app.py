@@ -142,8 +142,6 @@ def main():
             status_placeholder.error("ERROR.")
             return
         
-        time.sleep(4)
-        status_placeholder.empty()
     
     col1, col2 = st.columns([2, 4])
     
@@ -156,7 +154,7 @@ def main():
         
         if st.button("Generate Report"):
             with st.spinner("Generating report..."):
-                time.sleep(10)
+                time.sleep(5)
             
             report = filter_data(st.session_state.data, business_area)
     
@@ -164,8 +162,6 @@ def main():
         if uploaded_file and st.session_state.data is not None:
             show_labels = not st.sidebar.expander("Options").checkbox("Hide Sidebar Labels")
             pie_chart_placeholder = st.empty()
-            pie_chart_placeholder.write("Generating graphics...")
-            time.sleep(4)
             pie_chart_placeholder.empty()
             st.write("### Business Area Distribution")
             st.plotly_chart(plot_pie_chart(st.session_state.data, show_labels=show_labels), use_container_width=True)
