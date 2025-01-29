@@ -24,7 +24,7 @@ def generate_key_takeaways(description):
     takeaways = [f"• {sentence.strip()}" for sentence in sentences[:5]]
     while len(takeaways) < 5:
         takeaways.append("• [No further details available]")
-    return '\n'.join(takeaways)
+    return '<br>'.join(takeaways)
 
 # Filter data based on the selected business area
 def filter_data(df, business_area):
@@ -43,7 +43,7 @@ def plot_pie_chart(data):
         color_discrete_sequence=px.colors.sequential.RdBu
     )
     fig.update_traces(textinfo="percent+label", pull=[0.1, 0], hole=0.2)
-    fig.update_layout(height=600, width=600)
+    fig.update_layout(height=700, width=700)
     return fig
 
 # Streamlit app
@@ -68,7 +68,7 @@ def main():
                 max-width: 100%;
                 margin: auto;
             }
-            .stDataFrame {
+            .stDataFrame div {
                 overflow: hidden !important;
                 white-space: normal !important;
                 text-overflow: ellipsis !important;
@@ -128,7 +128,7 @@ def main():
         if not report.empty:
             st.markdown("<div class='report-container'>", unsafe_allow_html=True)
             st.write(f"### Report for {business_area}")
-            st.dataframe(report.style.set_properties(**{'white-space': 'normal'}), use_container_width=True)
+            st.write(report.to_html(escape=False), unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
         else:
             st.warning("No data available for the selected business area.")
