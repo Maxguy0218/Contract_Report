@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import json
 import os
+import time
 import plotly.express as px
 
 # Define the paths for the JSON files relative to the script
@@ -71,24 +72,54 @@ def main():
     st.sidebar.markdown("<p class='main-title'>ContractIQ</p>", unsafe_allow_html=True)
     
     # Sidebar upload section
-    uploaded_file = st.sidebar.file_uploader("Upload JSON File", type=["json"], key="file_uploader")
+    uploaded_file = st.sidebar.file_uploader("Upload a contract file", type=["docx", "pdf", "txt"])
     
-    # Main content layout
+    status_placeholder = st.empty()
+    
+    if "uploaded_file" not in st.session_state:
+        st.session_state.uploaded_file = None
+    
+    if uploaded_file:
+        if st.session_state.uploaded_file != uploaded_file:
+            st.session_state.uploaded_file = uploaded_file
+            st.session_state.data = None
+            st.session_state.business_area = None
+        
+        if "AETNA" in uploaded_file.name.upper():
+            st.session_state.data = load_atena_data()
+            status_placeholder.success("Aetna annotations loaded successfully!")
+        elif "BLUE" in uploaded_file.name.upper():
+            st.session_state.data = load_bcbs_data()
+            status_placeholder.success("BCBSA annotations loaded successfully!")
+        else:
+            status_placeholder.error("ERROR.")
+            return
+    
     col1, col2 = st.columns([2, 3])
     
     with col1:
         st.subheader("Contract Analysis Report")
         
-        if uploaded_file:
-            df = pd.read_json(uploaded_file)
-            business_areas = df["Business Area"].unique()
-            selected_area = st.selectbox("Select Business Area", business_areas)
-            filtered_data = filter_data(df, selected_area)
-            st.dataframe(filtered_data)
-    
-    with col2:
-        if uploaded_file:
-            st.plotly_chart(plot_pie_chart(df), use_container_width=True)
+        if uploaded_file and st.session_state.data is not None:
+            st.write("### Business Area Distribution")
+            st.plotly_chart(plot_pie_chart(st.session_state.data), use_container_width=True)
+            
+            business_area = st.radio(
+                "Select a Business Area",
+                ["Operational Risk Management", "Financial Risk Management"]
+            )
+            
+            if st.button("Generate Report"):
+                with st.spinner("Generating report..."):
+                    time.sleep(10)
+                
+                report = filter_data(st.session_state.data, business_area)
+                
+                if not report.empty:
+                    st.write(f"### Report for {business_area}")
+                    st.table(report)
+                else:
+                    st.warning("No data available for the selected business area.")
 
 if __name__ == "__main__":
     main()
