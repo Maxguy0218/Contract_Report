@@ -64,7 +64,7 @@ def main():
                 width: 180px !important;
             }
             .report-container {
-                max-width: 95%;
+                max-width: 100%;
                 margin: auto;
             }
         </style>
@@ -99,33 +99,33 @@ def main():
             status_placeholder.error("ERROR.")
             return
     
-    col1, col2 = st.columns([3, 2])
+    col1, col2 = st.columns([2, 3])
     
     with col1:
-        st.subheader("Contract Analysis Report")
-        
+        st.subheader("Select Business Area")
+        business_area = st.radio(
+            "Select a Business Area",
+            ["Operational Risk Management", "Financial Risk Management"]
+        )
+    
+    with col2:
         if uploaded_file and st.session_state.data is not None:
             st.write("### Business Area Distribution")
             st.plotly_chart(plot_pie_chart(st.session_state.data), use_container_width=True)
-            
-            business_area = st.radio(
-                "Select a Business Area",
-                ["Operational Risk Management", "Financial Risk Management"]
-            )
-            
-            if st.button("Generate Report"):
-                with st.spinner("Generating report..."):
-                    time.sleep(10)
-                
-                report = filter_data(st.session_state.data, business_area)
-                
-                if not report.empty:
-                    st.markdown("<div class='report-container'>", unsafe_allow_html=True)
-                    st.write(f"### Report for {business_area}")
-                    st.table(report)
-                    st.markdown("</div>", unsafe_allow_html=True)
-                else:
-                    st.warning("No data available for the selected business area.")
+    
+    if st.button("Generate Report"):
+        with st.spinner("Generating report..."):
+            time.sleep(10)
+        
+        report = filter_data(st.session_state.data, business_area)
+        
+        if not report.empty:
+            st.markdown("<div class='report-container'>", unsafe_allow_html=True)
+            st.write(f"### Report for {business_area}")
+            st.dataframe(report, use_container_width=True)
+            st.markdown("</div>", unsafe_allow_html=True)
+        else:
+            st.warning("No data available for the selected business area.")
 
 if __name__ == "__main__":
     main()
