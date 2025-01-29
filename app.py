@@ -34,7 +34,7 @@ def filter_data(df, business_area):
     return df_filtered[["Term Type", "Sub-Type", "Key Takeaways", "Page #"]]
 
 # Plot pie chart using Plotly
-def plot_pie_chart(data):
+def plot_pie_chart(data, show_labels=True):
     counts = data["Business Area"].value_counts()
     fig = px.pie(
         names=counts.index,
@@ -42,8 +42,9 @@ def plot_pie_chart(data):
         title="Business Area Distribution",
         color_discrete_sequence=px.colors.sequential.RdBu
     )
-    fig.update_traces(textinfo="percent+label", pull=[0.1, 0], hole=0.2)
-    fig.update_layout(height=600, width=800, margin=dict(l=100, r=100, t=50, b=50))
+    textinfo = "percent+label" if show_labels else "none"
+    fig.update_traces(textinfo=textinfo, pull=[0.1, 0], hole=0.2)
+    fig.update_layout(height=600, width=850, margin=dict(l=150, r=150, t=50, b=50))
     return fig
 
 # Streamlit app
@@ -77,18 +78,18 @@ def main():
                 max-width: 100%;
                 margin: auto;
             }
-            .stDataFrame div {
-                overflow: hidden !important;
-                white-space: normal !important;
-                text-overflow: ellipsis !important;
+            th {
+                text-align: left !important;
             }
         </style>
     """, unsafe_allow_html=True)
     
     # Branding in sidebar and main page
-    logo_path = "logo.svg"  # Ensure this file exists in your working directory
-    st.sidebar.markdown(f"""<div class='sidebar-title'><img src='{logo_path}' width='30'> ContractIQ</div>""", unsafe_allow_html=True)
-    st.markdown(f"""<div class='main-title'><img src='{logo_path}' width='60'> ContractIQ</div>""", unsafe_allow_html=True)
+    logo_path = "logo.svg"
+    st.sidebar.image(logo_path, width=30)
+    st.sidebar.markdown("<div class='sidebar-title'>ContractIQ</div>", unsafe_allow_html=True)
+    st.image(logo_path, width=60)
+    st.markdown("<div class='main-title'>ContractIQ</div>", unsafe_allow_html=True)
     
     # Sidebar upload section
     uploaded_file = st.sidebar.file_uploader("Upload a contract file", type=["docx", "pdf", "txt"])
@@ -134,12 +135,13 @@ def main():
     
     with col2:
         if uploaded_file and st.session_state.data is not None:
+            show_labels = not st.sidebar.expander("Options").checkbox("Hide Sidebar Labels")
             pie_chart_placeholder = st.empty()
             pie_chart_placeholder.write("Generating graphics...")
             time.sleep(4)
             pie_chart_placeholder.empty()
             st.write("### Business Area Distribution")
-            st.plotly_chart(plot_pie_chart(st.session_state.data), use_container_width=True)
+            st.plotly_chart(plot_pie_chart(st.session_state.data, show_labels=show_labels), use_container_width=True)
     
     # Ensure report is displayed below pie chart
     if "report" in locals() and not report.empty:
