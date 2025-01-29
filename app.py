@@ -134,10 +134,10 @@ def main():
         
         if "AETNA" in uploaded_file.name.upper():
             st.session_state.data = load_atena_data()
-            status_placeholder.success("Aetna annotations loaded successfully!")
+            
         elif "BLUE" in uploaded_file.name.upper():
             st.session_state.data = load_bcbs_data()
-            status_placeholder.success("BCBSA annotations loaded successfully!")
+            
         else:
             status_placeholder.error("ERROR.")
             return
