@@ -65,7 +65,6 @@ def main():
                 display: flex;
                 align-items: center;
                 gap: 10px;
-                margin-bottom: -30px;
             }
             .main-title {
                 font-size: 48px;
@@ -97,7 +96,7 @@ def main():
     logo_path = "logo.svg"
     if os.path.exists(logo_path):
         logo_base64 = get_base64_image(logo_path)
-        logo_img = f'<img src="data:image/svg+xml;base64,{logo_base64}" alt="Logo" style="width: 30px; vertical-align: middle;">'
+        logo_img = f'<img src="data:image/svg+xml;base64,{logo_base64}" alt="Logo" style="width: 50px; vertical-align: middle;">'
     else:
         logo_img = "[Logo Missing]"
 
@@ -113,7 +112,7 @@ def main():
     st.markdown(
         f"""
         <div class="header-container">
-            <img src="data:image/svg+xml;base64,{logo_base64}" alt="Logo" style="width: 60px; vertical-align: middle;">
+            <img src="data:image/svg+xml;base64,{logo_base64}" alt="Logo" style="width: 120px; vertical-align: middle;">
             <span class="main-title">ContractIQ</span>
         </div>
         """, unsafe_allow_html=True
