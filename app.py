@@ -4,6 +4,7 @@ import json
 import os
 import time
 import plotly.express as px
+import base64
 
 # Define the paths for the JSON files relative to the script
 ATENA_JSON_PATH = os.path.join(os.getcwd(), "atena_annotations_fixed.json")
@@ -47,6 +48,11 @@ def plot_pie_chart(data, show_labels=True):
     fig.update_layout(height=600, width=850, margin=dict(l=150, r=150, t=50, b=50))
     return fig
 
+# Function to encode the logo in Base64
+def get_base64_image(file_path):
+    with open(file_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
 # Streamlit app
 def main():
     # Set wide layout
@@ -88,10 +94,16 @@ def main():
     
     # Branding in sidebar and main page
     logo_path = "logo.svg"
+    if os.path.exists(logo_path):
+        logo_base64 = get_base64_image(logo_path)
+        logo_img = f'<img src="data:image/svg+xml;base64,{logo_base64}" alt="Logo" style="width: 30px; vertical-align: middle;">'
+    else:
+        logo_img = "[Logo Missing]"
+
     st.sidebar.markdown(
         f"""
         <div class="sidebar-title">
-            <img src="{logo_path}" alt="Logo" style="width: 30px; vertical-align: middle;">
+            {logo_img}
             ContractIQ
         </div>
         """, unsafe_allow_html=True
@@ -100,7 +112,7 @@ def main():
     st.markdown(
         f"""
         <div class="header-container">
-            <img src="{logo_path}" alt="Logo" style="width: 60px; vertical-align: middle;">
+            <img src="data:image/svg+xml;base64,{logo_base64}" alt="Logo" style="width: 60px; vertical-align: middle;">
             <span class="main-title">ContractIQ</span>
         </div>
         """, unsafe_allow_html=True
