@@ -55,13 +55,15 @@ def main():
     # Custom Styling
     st.markdown("""
         <style>
+            .header-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
             .main-title {
                 font-size: 48px;
                 font-weight: bold;
                 color: #FF5733;
-                display: flex;
-                align-items: center;
-                gap: 10px;
             }
             .sidebar-title {
                 font-size: 24px;
@@ -86,10 +88,18 @@ def main():
     
     # Branding in sidebar and main page
     logo_path = "logo.svg"
-    st.sidebar.image(logo_path, width=30)
-    st.sidebar.markdown("<div class='sidebar-title'>ContractIQ</div>", unsafe_allow_html=True)
-    st.image(logo_path, width=60)
-    st.markdown("<div class='main-title'>ContractIQ</div>", unsafe_allow_html=True)
+    st.sidebar.markdown(f"""
+        <div class='sidebar-title'>
+            <img src='{logo_path}' width='30'> ContractIQ
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown(f"""
+        <div class='header-container'>
+            <img src='{logo_path}' width='60'>
+            <div class='main-title'>ContractIQ</div>
+        </div>
+    """, unsafe_allow_html=True)
     
     # Sidebar upload section
     uploaded_file = st.sidebar.file_uploader("Upload a contract file", type=["docx", "pdf", "txt"])
