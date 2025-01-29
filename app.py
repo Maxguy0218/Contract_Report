@@ -43,7 +43,7 @@ def plot_pie_chart(data):
         color_discrete_sequence=px.colors.sequential.RdBu
     )
     fig.update_traces(textinfo="percent+label", pull=[0.1, 0], hole=0.2)
-    fig.update_layout(height=600, width=750, margin=dict(l=50, r=50, t=50, b=50))
+    fig.update_layout(height=600, width=800, margin=dict(l=100, r=100, t=50, b=50))
     return fig
 
 # Streamlit app
@@ -55,11 +55,20 @@ def main():
     st.markdown("""
         <style>
             .main-title {
-                font-size: 36px;
+                font-size: 48px;
                 font-weight: bold;
                 color: #FF5733;
                 display: flex;
                 align-items: center;
+                gap: 10px;
+            }
+            .sidebar-title {
+                font-size: 24px;
+                font-weight: bold;
+                color: #FF5733;
+                display: flex;
+                align-items: center;
+                gap: 10px;
             }
             .sidebar .css-1d391kg {
                 width: 180px !important;
@@ -76,10 +85,10 @@ def main():
         </style>
     """, unsafe_allow_html=True)
     
-    # Top-left branding
+    # Branding in sidebar and main page
     logo_path = "logo.svg"  # Ensure this file exists in your working directory
-    st.sidebar.image(logo_path, width=50)
-    st.sidebar.markdown("<p class='main-title'>ContractIQ</p>", unsafe_allow_html=True)
+    st.sidebar.markdown(f"""<div class='sidebar-title'><img src='{logo_path}' width='30'> ContractIQ</div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div class='main-title'><img src='{logo_path}' width='60'> ContractIQ</div>""", unsafe_allow_html=True)
     
     # Sidebar upload section
     uploaded_file = st.sidebar.file_uploader("Upload a contract file", type=["docx", "pdf", "txt"])
