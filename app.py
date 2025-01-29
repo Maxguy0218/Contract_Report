@@ -42,7 +42,8 @@ def plot_pie_chart(data):
         title="Business Area Distribution",
         color_discrete_sequence=px.colors.sequential.RdBu
     )
-    fig.update_traces(textinfo="percent+label", pull=[0.1, 0])
+    fig.update_traces(textinfo="percent+label", pull=[0.1, 0], hole=0.2)
+    fig.update_layout(height=600, width=600)
     return fig
 
 # Streamlit app
@@ -66,6 +67,11 @@ def main():
             .report-container {
                 max-width: 100%;
                 margin: auto;
+            }
+            .stDataFrame {
+                overflow: hidden !important;
+                white-space: normal !important;
+                text-overflow: ellipsis !important;
             }
         </style>
     """, unsafe_allow_html=True)
@@ -122,7 +128,7 @@ def main():
         if not report.empty:
             st.markdown("<div class='report-container'>", unsafe_allow_html=True)
             st.write(f"### Report for {business_area}")
-            st.dataframe(report, use_container_width=True)
+            st.dataframe(report.style.set_properties(**{'white-space': 'normal'}), use_container_width=True)
             st.markdown("</div>", unsafe_allow_html=True)
         else:
             st.warning("No data available for the selected business area.")
