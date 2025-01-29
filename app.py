@@ -112,7 +112,7 @@ def main():
     st.markdown(
         f"""
         <div class="header-container">
-            <img src="data:image/svg+xml;base64,{logo_base64}" alt="Logo" style="width: 80px; vertical-align: middle;">
+            <img src="data:image/svg+xml;base64,{logo_base64}" alt="Logo" style="width: 120px; vertical-align: middle;">
             <span class="main-title">ContractIQ</span>
         </div>
         """, unsafe_allow_html=True
