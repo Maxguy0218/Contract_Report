@@ -121,7 +121,6 @@ def main():
             status_placeholder.error("ERROR.")
             return
         
-        time.sleep(4)
         status_placeholder.empty()
     
     col1, col2 = st.columns([2, 4])
@@ -134,8 +133,7 @@ def main():
         )
         
         if st.button("Generate Report"):
-            with st.spinner("Generating report..."):
-                time.sleep(10)
+            
             
             report = filter_data(st.session_state.data, business_area)
     
