@@ -96,7 +96,7 @@ def main():
     logo_path = "logo.svg"
     if os.path.exists(logo_path):
         logo_base64 = get_base64_image(logo_path)
-        logo_img = f'<img src="data:image/svg+xml;base64,{logo_base64}" alt="Logo" style="width: 30px; vertical-align: middle;">'
+        logo_img = f'<img src="data:image/svg+xml;base64,{logo_base64}" alt="Logo" style="width: 50px; vertical-align: middle;">'
     else:
         logo_img = "[Logo Missing]"
 
