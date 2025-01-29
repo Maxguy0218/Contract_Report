@@ -5,9 +5,10 @@ import os
 import time
 import plotly.express as px
 
-# Define the paths for the JSON files relative to the script
+# Define the paths for the JSON files and logo
 ATENA_JSON_PATH = os.path.join(os.getcwd(), "atena_annotations_fixed.json")
 BCBS_JSON_PATH = os.path.join(os.getcwd(), "bcbs_annotations_fixed.json")
+LOGO_PATH = "logo.svg"  # Ensure this file is in your project directory
 
 # Load the annotated data from JSON files
 def load_atena_data():
@@ -50,40 +51,92 @@ def main():
     # Set wide layout
     st.set_page_config(layout="wide")
 
-    st.title("Contract Analysis Report")
-    st.write("Upload a contract file and select a business area to generate a report.")
-    
-    # Placeholder for status messages
-    status_placeholder = st.empty()
+    # Custom CSS for jazzy styling
+    st.markdown(
+        """
+        <style>
+            .report-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .header-container {
+                display: flex;
+                align-items: center;
+            }
+            .header-container img {
+                width: 50px;
+                margin-right: 10px;
+            }
+            .upload-container {
+                display: flex;
+                align-items: center;
+                gap: 40px;
+            }
+            .stButton>button {
+                background: linear-gradient(135deg, #ff416c, #ff4b2b);
+                color: white;
+                border-radius: 8px;
+                padding: 10px 20px;
+                font-size: 16px;
+            }
+            .stRadio>div {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+            }
+            .stTable {
+                font-size: 14px;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
-    # File upload
-    if "uploaded_file" not in st.session_state:
-        st.session_state.uploaded_file = None
+    # Header with Logo + ContractIQ
+    st.markdown(
+        f"""
+        <div class="header-container">
+            <img src="{LOGO_PATH}" alt="Logo">
+            <h1 style="display:inline;">ContractIQ</h1>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-    uploaded_file = st.file_uploader("Upload a contract file", type=["docx", "pdf", "txt"])
+    st.write("### Upload a contract file and analyze business risks")
+
+    # Layout for Upload & Pie Chart (Side by Side)
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        uploaded_file = st.file_uploader("Upload a contract file", type=["docx", "pdf", "txt"])
+
+    with col2:
+        if uploaded_file:
+            st.write("### Business Area Distribution")
+            if "AETNA" in uploaded_file.name.upper():
+                data = load_atena_data()
+            elif "BLUE" in uploaded_file.name.upper():
+                data = load_bcbs_data()
+            else:
+                st.error("ERROR. Unsupported file type.")
+                return
+
+            pie_chart = plot_pie_chart(data)
+            st.plotly_chart(pie_chart, use_container_width=True)  # Right-aligned pie chart
 
     if uploaded_file:
-        if st.session_state.uploaded_file != uploaded_file:
-            # Flush previous data if a new file is uploaded
-            st.session_state.uploaded_file = uploaded_file
-            st.session_state.data = None
-            st.session_state.business_area = None
-
         # Determine which dataset to load based on the file name
         if "AETNA" in uploaded_file.name.upper():
             st.session_state.data = load_atena_data()
-            status_placeholder.success("Aetna annotations loaded successfully!")
+            st.success("Aetna annotations loaded successfully!")
         elif "BLUE" in uploaded_file.name.upper():
             st.session_state.data = load_bcbs_data()
-            status_placeholder.success("BCBSA annotations loaded successfully!")
+            st.success("BCBSA annotations loaded successfully!")
         else:
-            status_placeholder.error("ERROR.")
+            st.error("ERROR.")
             return
-
-        # Display integrated pie chart for business area distribution
-        st.write("### Business Area Distribution")
-        pie_chart = plot_pie_chart(st.session_state.data)
-        st.plotly_chart(pie_chart, use_container_width=True)  # Fully integrated with Streamlit UI
 
         # Business area selection using radio buttons
         business_area = st.radio(
