@@ -43,7 +43,7 @@ def plot_pie_chart(data):
         color_discrete_sequence=px.colors.sequential.RdBu
     )
     fig.update_traces(textinfo="percent+label", pull=[0.1, 0], hole=0.2)
-    fig.update_layout(height=700, width=700)
+    fig.update_layout(height=700, width=750)  # Slightly wider to avoid shrinking
     return fig
 
 # Streamlit app
@@ -129,8 +129,13 @@ def main():
             pie_chart_placeholder.write("Generating graphics...")
             time.sleep(4)
             pie_chart_placeholder.empty()
-            st.write("### Business Area Distribution")
-            st.plotly_chart(plot_pie_chart(st.session_state.data), use_container_width=True)
+
+            # Ensure the pie chart shifts slightly right
+            with st.container():
+                st.write("### Business Area Distribution")
+                _, chart_col, _ = st.columns([0.2, 0.8, 0])  # Adjusted for shifting right
+                with chart_col:
+                    st.plotly_chart(plot_pie_chart(st.session_state.data), use_container_width=True)
     
     # Ensure report is displayed below pie chart
     if "report" in locals() and not report.empty:
