@@ -61,7 +61,11 @@ def main():
                 align-items: center;
             }
             .sidebar .css-1d391kg {
-                width: 200px !important;
+                width: 180px !important;
+            }
+            .report-container {
+                max-width: 95%;
+                margin: auto;
             }
         </style>
     """, unsafe_allow_html=True)
@@ -95,7 +99,7 @@ def main():
             status_placeholder.error("ERROR.")
             return
     
-    col1, col2 = st.columns([2, 3])
+    col1, col2 = st.columns([3, 2])
     
     with col1:
         st.subheader("Contract Analysis Report")
@@ -116,8 +120,10 @@ def main():
                 report = filter_data(st.session_state.data, business_area)
                 
                 if not report.empty:
+                    st.markdown("<div class='report-container'>", unsafe_allow_html=True)
                     st.write(f"### Report for {business_area}")
                     st.table(report)
+                    st.markdown("</div>", unsafe_allow_html=True)
                 else:
                     st.warning("No data available for the selected business area.")
 
