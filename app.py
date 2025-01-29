@@ -97,13 +97,16 @@ def main():
         
         if "AETNA" in uploaded_file.name.upper():
             st.session_state.data = load_atena_data()
-        
+            status_placeholder.success("Aetna annotations loaded successfully!")
         elif "BLUE" in uploaded_file.name.upper():
             st.session_state.data = load_bcbs_data()
             status_placeholder.success("BCBSA annotations loaded successfully!")
         else:
             status_placeholder.error("ERROR.")
             return
+        
+        time.sleep(4)
+        status_placeholder.empty()
     
     col1, col2 = st.columns([2, 3])
     
@@ -113,25 +116,29 @@ def main():
             "Select a Business Area",
             ["Operational Risk Management", "Financial Risk Management"]
         )
+        
+        if st.button("Generate Report"):
+            with st.spinner("Generating report..."):
+                time.sleep(10)
+            
+            report = filter_data(st.session_state.data, business_area)
+            
+            if not report.empty:
+                st.markdown("<div class='report-container'>", unsafe_allow_html=True)
+                st.write(f"### Report for {business_area}")
+                st.write(report.to_html(escape=False), unsafe_allow_html=True)
+                st.markdown("</div>", unsafe_allow_html=True)
+            else:
+                st.warning("No data available for the selected business area.")
     
     with col2:
         if uploaded_file and st.session_state.data is not None:
+            pie_chart_placeholder = st.empty()
+            pie_chart_placeholder.write("Generating graphics...")
+            time.sleep(4)
+            pie_chart_placeholder.empty()
             st.write("### Business Area Distribution")
             st.plotly_chart(plot_pie_chart(st.session_state.data), use_container_width=True)
-    
-    if st.button("Generate Report"):
-        with st.spinner("Generating report..."):
-            time.sleep(10)
-        
-        report = filter_data(st.session_state.data, business_area)
-        
-        if not report.empty:
-            st.markdown("<div class='report-container'>", unsafe_allow_html=True)
-            st.write(f"### Report for {business_area}")
-            st.write(report.to_html(escape=False), unsafe_allow_html=True)
-            st.markdown("</div>", unsafe_allow_html=True)
-        else:
-            st.warning("No data available for the selected business area.")
 
 if __name__ == "__main__":
     main()
